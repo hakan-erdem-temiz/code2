@@ -1,0 +1,6 @@
+node_modules/
+logfile.log
+
+local-dev.json
+
+*.log
