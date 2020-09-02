@@ -4,6 +4,7 @@
 import Koa from 'koa';
 import KoaRouter from 'koa-router';
 import bodyParser from 'koa-bodyparser'
+import mongo from 'koa-mongo'
 
 const port = 3670;
 const app = new Koa();
@@ -11,6 +12,55 @@ const router = new KoaRouter();
 
 // use as middle ware
 app.use(bodyParser())
+app.use(mongo({
+  host: 'localhost',
+  port: 27017,
+  db: 'koadb'
+}))
+router.post('/addUser', add);
+router.get('/user', list);
+router.put('/update', update);
+router.delete('/delete', deleteData);
+
+// Post User
+async function add(ctx) {
+  const uin = ctx.request.body
+  await ctx.db.collection('userlist').insertOne(uin)
+  ctx.body = 'Data Instered'
+}
+
+// Get User
+async function  list(ctx) {
+  ctx.body = await ctx.db.collection('userlist').find().toArray()
+}
+
+// Update User
+async function update(ctx) {
+
+  const uin = ctx.request.body;
+  const user = await ctx.db.collection('userlist').findOneAndUpdate({
+    'id': uin.id
+  },
+  {
+    $set: {
+      name: uin.name
+    }
+  },
+  {upsert: true}
+  )
+
+
+  ctx.body = 'Data Updated'
+}
+
+async function deleteData(ctx) {
+  const uin = ctx.request.body;
+  await ctx.db.collection('userlist').findOneAndDelete({
+    "id": uin.id
+  })
+
+  ctx.body = "Data deleted"
+}
 
 
 // Error Handling Middleware
@@ -24,59 +74,7 @@ app.use(async (ctx, next)=> {
   }
 })
 
-const data = [{
-    "id": 1,
-    "name": "John"
-  },
-  {
-    "id": 2,
-    "name": "Alis"
-  }
-]
 
-router.get('/', read);
-router.post('/add', add)
-router.put('/update', update)
-router.delete('/delete', deletedata);
-
-async function read(ctx) {
-  ctx.body = data
-}
-
-async function add(ctx) {
-  const uin = ctx.request.body;
-  data.push(uin)
-  ctx.body = "Data Added"
-}
-
-async function update(ctx) {
-  const uin = ctx.request.body;
-  const index = data.findIndex(e => e.id === uin.id)
-  let message;
-  if (index === -1) {
-    data.push(uin)
-    message = "data Added"
-  } else {
-    data[index] = uin;
-    message = 'data Updated';
-  }
-
-  ctx.body = message
-}
-
-async function deletedata(ctx) {
-  const uin = ctx.request.body;
-  const index = data.findIndex((e) => e.id === uin.id);
-  let message;
-  if (index === -1) {
-    message = 'Data Not Found';
-  } else {
-    delete data[index];
-    message = 'data Deleted';
-  }
-
-  ctx.body = message;
-}
 
 app.use(router.routes()).use(router.allowedMethods());
 app.listen(port, () => console.log('Server Running'));
