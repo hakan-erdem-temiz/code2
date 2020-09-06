@@ -3,7 +3,8 @@ import bodyParser from 'koa-bodyparser'
 import mongoose from 'mongoose';
 import routing from './routes';
 import { port, connexionString } from './config/default';
-
+import path from 'path'
+import render from 'koa-ejs'
 
 mongoose.connect(connexionString, {
   useNewUrlParser: true,
@@ -16,6 +17,15 @@ const app = new Koa();
 
 // use as middle ware
 app.use(bodyParser())
+
+// for rendering in EJS
+render(app, {
+  root: path.join(__dirname, 'views'),
+  layout: 'layout',
+  viewExt: 'html',
+  cache: false,
+  debug: false
+})
 
 routing(app);
 

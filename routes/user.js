@@ -7,6 +7,7 @@ const router = new Router();
 
 router.post('/addUser', add);
 router.get('/user', list);
+router.get('/', read);
 router.put('/update', update);
 router.delete('/delete', deleteData);
 
@@ -28,6 +29,14 @@ async function add(ctx) {
 // Get User
 async function list(ctx) {
   ctx.body = await User.find({})
+}
+
+async function read(ctx) {
+  const data = await User.find({})
+  await ctx.render('index', {
+    title: 'User List',
+    data
+  })
 }
 
 // Update User

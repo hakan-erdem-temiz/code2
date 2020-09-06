@@ -1,0 +1,22 @@
+db.hotels.insertMany(
+[
+  {
+    "id":1,
+    "distance": "Holiday Inn",
+    "city": "New York",
+    "details": " bla bla bla",
+    "image": "3.5",
+    "reviews": "It is a logn established",
+    "__v": 0
+  },
+  {
+    "id": 2,
+    "distance": "Holiday Time",
+    "city": "New me",
+    "details": " bla bla bla",
+    "image": "55",
+    "reviews": "wow",
+    "__v": 0
+  }
+]
+)
