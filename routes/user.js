@@ -1,15 +1,17 @@
 // import 'babel-polyfill';
 import User from '../model/User'
 import Router from 'koa-router';
+import auth from 'koa-basic-auth'
+import { credentials } from '../config/default';
 
 const router = new Router();
 
 
-router.post('/addUser', add);
-router.get('/user', list);
+router.post('/addUser', auth(credentials), add);
+router.get('/user', auth(credentials), list);
 router.get('/', read);
-router.put('/update', update);
-router.delete('/delete', deleteData);
+router.put('/update', auth(credentials), update);
+router.delete('/delete', auth(credentials), deleteData);
 
 
 // Post User

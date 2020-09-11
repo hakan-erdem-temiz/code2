@@ -2,7 +2,7 @@ import Koa from 'koa';
 import bodyParser from 'koa-bodyparser'
 import mongoose from 'mongoose';
 import routing from './routes';
-import { port, connexionString } from './config/default';
+import { port, connexionString, credentials } from './config/default';
 import path from 'path'
 import render from 'koa-ejs'
 
